@@ -1,6 +1,6 @@
 export enum Role {
   ADMIN = 'admin',
-  VENDEDOR = 'vendedor',
+  CHOFER = 'chofer',
   CLIENTE = 'cliente',
 }
 
@@ -8,6 +8,15 @@ export interface RegisterRequest {
   email: string;
   password: string;
   role?: Role;
+  nombre: string;
+  dni: string;
+  cuit: string;
+  telefono: string;
+  ubicacion: string;
+  razonSocial?: string;
+  tipoComercio?: string;
+  notas?: string;
+  foto?: string;
 }
 
 export interface RegisterResponse {
@@ -16,6 +25,15 @@ export interface RegisterResponse {
     id: string;
     email: string;
     role: Role;
+    nombre: string;
+    dni: string;
+    cuit: string;
+    telefono: string;
+    ubicacion: string;
+    razonSocial?: string;
+    tipoComercio?: string;
+    notas?: string;
+    foto?: string;
   };
 }
 
@@ -30,5 +48,6 @@ export interface LoginResponse {
     id: string;
     email: string;
     role: Role;
+    nombre: string;
   };
 }

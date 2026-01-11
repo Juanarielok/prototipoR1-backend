@@ -13,6 +13,11 @@
  *             required:
  *               - email
  *               - password
+ *               - nombre
+ *               - dni
+ *               - cuit
+ *               - telefono
+ *               - ubicacion
  *             properties:
  *               email:
  *                 type: string
@@ -24,30 +29,39 @@
  *                 example: mypassword123
  *               role:
  *                 type: string
- *                 enum: [admin, vendedor, cliente]
+ *                 enum: [admin, chofer, cliente]
  *                 default: cliente
  *                 example: cliente
+ *               nombre:
+ *                 type: string
+ *                 example: Juan Pérez
+ *               dni:
+ *                 type: string
+ *                 example: "12345678"
+ *               cuit:
+ *                 type: string
+ *                 example: "27-12345678-9"
+ *               telefono:
+ *                 type: string
+ *                 example: "+54 11 1234-5678"
+ *               ubicacion:
+ *                 type: string
+ *                 example: "Buenos Aires, Argentina"
+ *               razonSocial:
+ *                 type: string
+ *                 example: "Empresa S.A."
+ *               tipoComercio:
+ *                 type: string
+ *                 example: "Mayorista"
+ *               notas:
+ *                 type: string
+ *                 example: "Cliente preferencial"
+ *               foto:
+ *                 type: string
+ *                 example: "https://example.com/foto.jpg"
  *     responses:
  *       201:
  *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
- *                 token:
- *                   type: string
  *       400:
  *         description: Validation error
  *       409:
@@ -80,24 +94,6 @@
  *     responses:
  *       200:
  *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
- *                 token:
- *                   type: string
  *       401:
  *         description: Invalid credentials
  */
@@ -113,22 +109,6 @@
  *     responses:
  *       200:
  *         description: Authenticated user data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
  *       401:
  *         description: Unauthorized
  */
