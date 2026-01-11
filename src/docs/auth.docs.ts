@@ -2,7 +2,7 @@
  * @swagger
  * /auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register first admin (only works if no admin exists)
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -22,19 +22,14 @@
  *               email:
  *                 type: string
  *                 format: email
- *                 example: user@example.com
+ *                 example: admin@example.com
  *               password:
  *                 type: string
  *                 minLength: 6
  *                 example: mypassword123
- *               role:
- *                 type: string
- *                 enum: [admin, chofer, cliente]
- *                 default: cliente
- *                 example: cliente
  *               nombre:
  *                 type: string
- *                 example: Juan Pérez
+ *                 example: Admin Principal
  *               dni:
  *                 type: string
  *                 example: "12345678"
@@ -55,15 +50,17 @@
  *                 example: "Mayorista"
  *               notas:
  *                 type: string
- *                 example: "Cliente preferencial"
+ *                 example: "Administrador principal"
  *               foto:
  *                 type: string
  *                 example: "https://example.com/foto.jpg"
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: Admin registered successfully
  *       400:
  *         description: Validation error
+ *       403:
+ *         description: Admin already exists
  *       409:
  *         description: User already exists
  */
@@ -87,7 +84,7 @@
  *               email:
  *                 type: string
  *                 format: email
- *                 example: user@example.com
+ *                 example: admin@example.com
  *               password:
  *                 type: string
  *                 example: mypassword123

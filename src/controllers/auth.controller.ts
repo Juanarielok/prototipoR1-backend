@@ -9,20 +9,18 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = '24h';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password, role, nombre, dni, cuit, telefono, ubicacion, razonSocial, tipoComercio, notas, foto }: RegisterRequest = req.body;
+  const { email, password, nombre, dni, cuit, telefono, ubicacion, razonSocial, tipoComercio, notas, foto }: RegisterRequest = req.body;
+
+  // Check if admin already exists
+  const existingAdmin = await User.findOne({ where: { role: Role.ADMIN } });
+  if (existingAdmin) {
+    res.status(403).json({ error: 'Admin already exists. Contact an administrator to create new users.' });
+    return;
+  }
 
   // Basic validation
   if (!email || !password || !nombre || !dni || !cuit || !telefono || !ubicacion) {
     res.status(400).json({ error: 'Email, password, nombre, dni, cuit, telefono y ubicacion son requeridos' });
-    return;
-  }
-
-  // Validate role if provided
-  const validRoles = Object.values(Role);
-  const userRole = role || Role.CLIENTE;
-
-  if (role && !validRoles.includes(role)) {
-    res.status(400).json({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` });
     return;
   }
 
@@ -68,12 +66,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Create new user with hashed password
+    // Create admin user
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const newUser = await User.create({
       email,
       password: hashedPassword,
-      role: userRole,
+      role: Role.ADMIN,
       nombre,
       dni,
       cuit,
@@ -93,7 +91,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     );
 
     res.status(201).json({
-      message: 'User registered successfully',
+      message: 'Admin registered successfully',
       user: {
         id: newUser.id,
         email: newUser.email,
