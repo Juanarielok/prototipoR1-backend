@@ -5,17 +5,28 @@ import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import { swaggerSpec } from './config/swagger';
 import { sequelize } from './models';
-
+import assignmentsRoutes from "./routes/assignments.routes";
+import cors from "cors";
 const app: Application = express();
 const PORT = 3000;
 
 // Middleware
 app.use(express.json());
+app.use("/assignments", assignmentsRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
+
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Routes
 app.get('/', (req: Request, res: Response) => {
