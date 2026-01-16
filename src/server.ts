@@ -3,7 +3,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
-import { swaggerSpec } from './config/swagger';
+import { swaggerSpec, swaggerUiOptions } from './config/swagger';
 import { sequelize } from './models';
 import assignmentsRoutes from "./routes/assignments.routes";
 import cors from "cors";
@@ -38,7 +38,7 @@ app.post("/test", (req: Request, res: Response) => {
 });
 
 // Swagger docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 // Auth routes
 app.use("/auth", authRoutes);

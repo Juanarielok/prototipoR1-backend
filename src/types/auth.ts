@@ -17,6 +17,8 @@ export interface RegisterRequest {
   tipoComercio?: string;
   notas?: string;
   foto?: string;
+  usuario?: string;
+  codigoArea?: string;
 }
 
 export interface RegisterResponse {
@@ -34,6 +36,8 @@ export interface RegisterResponse {
     tipoComercio?: string;
     notas?: string;
     foto?: string;
+    usuario?: string;
+    codigoArea?: string;
   };
 }
 

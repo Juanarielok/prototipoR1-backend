@@ -9,35 +9,44 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = '24h';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password, nombre, dni, cuit, telefono, ubicacion, razonSocial, tipoComercio, notas, foto }: RegisterRequest = req.body;
+  const { 
+    email, 
+    password, 
+    nombre, 
+    dni, 
+    cuit, 
+    telefono, 
+    ubicacion, 
+    razonSocial, 
+    tipoComercio, 
+    notas, 
+    foto,
+    usuario,
+    codigoArea
+  }: RegisterRequest = req.body;
 
-  // Check if admin already exists
   const existingAdmin = await User.findOne({ where: { role: Role.ADMIN } });
   if (existingAdmin) {
     res.status(403).json({ error: 'Admin already exists. Contact an administrator to create new users.' });
     return;
   }
 
-  // Basic validation
   if (!email || !password || !nombre || !dni || !cuit || !telefono || !ubicacion) {
     res.status(400).json({ error: 'Email, password, nombre, dni, cuit, telefono y ubicacion son requeridos' });
     return;
   }
 
-  // Check if email is valid format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     res.status(400).json({ error: 'Invalid email format' });
     return;
   }
 
-  // Check password length
   if (password.length < 6) {
     res.status(400).json({ error: 'Password must be at least 6 characters' });
     return;
   }
 
-  // Validate CUIT format (XX-XXXXXXXX-X)
   const cuitRegex = /^\d{2}-\d{8}-\d{1}$/;
   if (!cuitRegex.test(cuit)) {
     res.status(400).json({ error: 'Invalid CUIT format. Use XX-XXXXXXXX-X' });
@@ -45,28 +54,24 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       res.status(409).json({ error: 'User with this email already exists' });
       return;
     }
 
-    // Check if DNI already exists
     const existingDni = await User.findOne({ where: { dni } });
     if (existingDni) {
       res.status(409).json({ error: 'User with this DNI already exists' });
       return;
     }
 
-    // Check if CUIT already exists
     const existingCuit = await User.findOne({ where: { cuit } });
     if (existingCuit) {
       res.status(409).json({ error: 'User with this CUIT already exists' });
       return;
     }
 
-    // Create admin user
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const newUser = await User.create({
       email,
@@ -81,9 +86,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       tipoComercio,
       notas,
       foto,
+      usuario,
+      codigoArea,
     });
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: newUser.id, email: newUser.email, role: newUser.role },
       JWT_SECRET,
@@ -105,6 +111,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         tipoComercio: newUser.tipoComercio,
         notas: newUser.notas,
         foto: newUser.foto,
+        usuario: newUser.usuario,
+        codigoArea: newUser.codigoArea,
       },
       token,
     });
