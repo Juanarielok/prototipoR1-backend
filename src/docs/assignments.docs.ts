@@ -74,3 +74,28 @@
  *       403:
  *         description: Access denied - Chofer only
  */
+
+/**
+ * @swagger
+ * /assignments/me/count:
+ *   get:
+ *     summary: Get total count of assigned clients (Chofer only)
+ *     tags: [Assignments]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Total count of assigned clients
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 15
+ *       401:
+ *         description: Unauthorized (missing/invalid JWT)
+ *       403:
+ *         description: Access denied - Chofer only
+ */
