@@ -104,42 +104,4 @@ router.get("/me", authenticate, authorize(Role.CHOFER), async (req: AuthRequest,
   }
 });
 
-/**
- * Chofer marca un cliente como visitado (al generar factura)
- * PATCH /assignments/:clienteId/complete
- */
-router.patch("/:clienteId/complete", authenticate, authorize(Role.CHOFER), async (req: AuthRequest, res: Response) => {
-  const { clienteId } = req.params;
-  const choferId = req.user!.id;
-
-  try {
-    const assignment = await Assignment.findOne({
-      where: { choferId, clienteId, status: "assigned" }
-    });
-
-    if (!assignment) {
-      return res.status(404).json({ error: "Asignación no encontrada o ya completada" });
-    }
-
-    // Actualizar assignment
-    await assignment.update({ status: "done" });
-
-    // Actualizar status del cliente a "visitado"
-    await User.update(
-      { status: ClientStatus.VISITADO },
-      { where: { id: clienteId } }
-    );
-
-    return res.json({
-      message: "Cliente marcado como visitado",
-      clienteId,
-      assignmentStatus: "done",
-      clientStatus: "visitado"
-    });
-  } catch (error) {
-    console.error("Assignments PATCH /:clienteId/complete error:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 export default router;
