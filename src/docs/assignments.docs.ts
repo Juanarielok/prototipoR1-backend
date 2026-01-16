@@ -1,0 +1,76 @@
+/**
+ * @swagger
+ * /assignments:
+ *   post:
+ *     summary: Assign one or more clientes to a chofer (Admin only)
+ *     tags: [Assignments]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - choferId
+ *               - clientIds
+ *             properties:
+ *               choferId:
+ *                 type: string
+ *                 description: Chofer user ID (UUID - Universally Unique Identifier)
+ *                 example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *               clientIds:
+ *                 type: array
+ *                 description: Array of client user IDs
+ *                 items:
+ *                   type: string
+ *                   example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
+ *     responses:
+ *       201:
+ *         description: Clients assigned
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized (missing/invalid JWT - JSON Web Token)
+ *       403:
+ *         description: Access denied - Admin only
+ *       404:
+ *         description: Chofer not found
+ */
+
+/**
+ * @swagger
+ * /assignments/me:
+ *   get:
+ *     summary: Get my assigned clientes (Chofer only)
+ *     tags: [Assignments]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of assigned clientes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientes:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
+ *                       nombre:
+ *                         type: string
+ *                         example: "Cliente Ejemplo"
+ *                       ubicacion:
+ *                         type: string
+ *                         example: "Av. Siempre Viva 742, Mar del Plata"
+ *       401:
+ *         description: Unauthorized (missing/invalid JWT - JSON Web Token)
+ *       403:
+ *         description: Access denied - Chofer only
+ */

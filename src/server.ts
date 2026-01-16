@@ -8,17 +8,17 @@ import { sequelize } from './models';
 import assignmentsRoutes from "./routes/assignments.routes";
 import cors from "cors";
 const app: Application = express();
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || "3000", 10);
+
 
 // Middleware
 app.use(express.json());
-app.use("/assignments", assignmentsRoutes);
 app.use(express.urlencoded({ extended: true }));
-app.use((req: Request, res: Response, next: NextFunction) => {
+
+app.use((req: Request, _res: Response, next: NextFunction) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
-
 
 app.use(
   cors({
@@ -29,22 +29,25 @@ app.use(
 );
 
 // Routes
-app.get('/', (req: Request, res: Response) => {
-  res.status(200).json({ message: 'Server is running 🚀' });
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).json({ message: "Server is running 🚀" });
 });
 
-app.post('/test', (req: Request, res: Response) => {
+app.post("/test", (req: Request, res: Response) => {
   res.status(200).json({ receivedBody: req.body });
 });
 
 // Swagger docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Auth routes
-app.use('/auth', authRoutes);
+app.use("/auth", authRoutes);
 
 // User routes
-app.use('/users', userRoutes);
+app.use("/users", userRoutes);
+
+// Assignments routes
+app.use("/assignments", assignmentsRoutes);
 
 // Database connection and server start
 const startServer = async () => {
