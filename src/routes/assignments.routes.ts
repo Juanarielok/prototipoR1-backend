@@ -18,7 +18,6 @@ router.post("/", authenticate, authorize(Role.ADMIN), async (req: AuthRequest, r
   }
 
   try {
-    // Validación mínima: que el chofer exista y sea rol CHOFER
     const chofer = await User.findByPk(choferId, { attributes: ["id", "role"] });
     if (!chofer) {
       return res.status(404).json({ error: "Chofer no encontrado" });
@@ -27,7 +26,6 @@ router.post("/", authenticate, authorize(Role.ADMIN), async (req: AuthRequest, r
       return res.status(400).json({ error: "El usuario indicado no es chofer" });
     }
 
-    // Filtramos solo clientes que existan y tengan rol CLIENTE
     const users = await User.findAll({
       where: { id: clientIds },
       attributes: ["id", "role"],
@@ -60,13 +58,32 @@ router.post("/", authenticate, authorize(Role.ADMIN), async (req: AuthRequest, r
 });
 
 /**
+ * Chofer obtiene el total de clientes asignados
+ * GET /assignments/me/count
+ */
+router.get("/me/count", authenticate, authorize(Role.CHOFER), async (req: AuthRequest, res: Response) => {
+  try {
+    const choferId = req.user!.id;
+
+    const count = await Assignment.count({
+      where: { choferId, status: "assigned" }
+    });
+
+    return res.json({ count });
+  } catch (error) {
+    console.error("Assignments GET /me/count error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/**
  * Chofer trae SUS clientes asignados (para la APK)
  * GET /assignments/me
  * devuelve: { clientes: [{ id, nombre, ubicacion }] }
  */
 router.get("/me", authenticate, authorize(Role.CHOFER), async (req: AuthRequest, res: Response) => {
   try {
-    const choferId = req.user!.id; // authenticate setea req.user
+    const choferId = req.user!.id;
 
     const asignaciones = await Assignment.findAll({
       where: { choferId, status: "assigned" },
@@ -75,6 +92,7 @@ router.get("/me", authenticate, authorize(Role.CHOFER), async (req: AuthRequest,
     });
 
     const clientes = asignaciones.map((a: any) => a.cliente).filter(Boolean);
+
     return res.json({ clientes });
   } catch (error) {
     console.error("Assignments GET /me error:", error);
