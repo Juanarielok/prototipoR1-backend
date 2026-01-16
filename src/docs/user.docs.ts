@@ -61,6 +61,12 @@
  *               foto:
  *                 type: string
  *                 example: "https://example.com/foto.jpg"
+ *               usuario:
+ *                 type: string
+ *                 example: "jperez"
+ *               codigoArea:
+ *                 type: string
+ *                 example: "011"
  *     responses:
  *       201:
  *         description: User created successfully
@@ -78,7 +84,7 @@
  * @swagger
  * /users/search:
  *   get:
- *     summary: Find user by ID or DNI
+ *     summary: Find user by ID, DNI, or Email
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -88,11 +94,58 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID or DNI
- *         example: "12345678"
+ *         description: User ID (UUID), DNI, or Email
+ *         examples:
+ *           byDni:
+ *             summary: Search by DNI
+ *             value: "12345678"
+ *           byEmail:
+ *             summary: Search by Email
+ *             value: "cliente@example.com"
+ *           byId:
+ *             summary: Search by UUID
+ *             value: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
  *     responses:
  *       200:
  *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *                     email:
+ *                       type: string
+ *                       example: "cliente@example.com"
+ *                     role:
+ *                       type: string
+ *                       example: "cliente"
+ *                     nombre:
+ *                       type: string
+ *                       example: "Juan Pérez"
+ *                     dni:
+ *                       type: string
+ *                       example: "12345678"
+ *                     cuit:
+ *                       type: string
+ *                       example: "27-12345678-9"
+ *                     telefono:
+ *                       type: string
+ *                       example: "+54 11 1234-5678"
+ *                     ubicacion:
+ *                       type: string
+ *                       example: "Buenos Aires, Argentina"
+ *                     usuario:
+ *                       type: string
+ *                       example: "jperez"
+ *                     codigoArea:
+ *                       type: string
+ *                       example: "011"
  *       400:
  *         description: Search parameter required
  *       401:
@@ -116,11 +169,42 @@
  *         schema:
  *           type: string
  *           enum: [admin, chofer, cliente]
- *         description: User role
+ *         description: User role to filter by
  *         example: cliente
  *     responses:
  *       200:
  *         description: List of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 5
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *                       email:
+ *                         type: string
+ *                         example: "cliente@example.com"
+ *                       role:
+ *                         type: string
+ *                         example: "cliente"
+ *                       nombre:
+ *                         type: string
+ *                         example: "Juan Pérez"
+ *                       usuario:
+ *                         type: string
+ *                         example: "jperez"
+ *                       codigoArea:
+ *                         type: string
+ *                         example: "011"
  *       400:
  *         description: Invalid role
  *       401:
@@ -141,7 +225,8 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID (UUID)
+ *         example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
  *     requestBody:
  *       required: true
  *       content:
@@ -180,11 +265,74 @@
  *                 type: string
  *                 enum: [admin, chofer, cliente]
  *                 example: cliente
+ *               usuario:
+ *                 type: string
+ *                 example: "jperez"
+ *               codigoArea:
+ *                 type: string
+ *                 example: "011"
  *     responses:
  *       200:
  *         description: User updated successfully
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Access denied - Admin only
+ *       404:
+ *         description: User not found
+ */
+
+/**
+ * @swagger
+ * /users/{id}/reset-password:
+ *   put:
+ *     summary: Reset user password (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID (UUID)
+ *         example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: New password (minimum 6 characters)
+ *                 example: "newpassword123"
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password reset successfully"
+ *                 userId:
+ *                   type: string
+ *                   example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *                 email:
+ *                   type: string
+ *                   example: "cliente@example.com"
+ *       400:
+ *         description: Validation error (missing password or too short)
+ *       401:
+ *         description: Unauthorized (missing or invalid token)
  *       403:
  *         description: Access denied - Admin only
  *       404:

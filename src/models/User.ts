@@ -16,11 +16,13 @@ interface UserAttributes {
   tipoComercio?: string;
   notas?: string;
   foto?: string;
+  usuario?: string;
+  codigoArea?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'razonSocial' | 'tipoComercio' | 'notas' | 'foto'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'razonSocial' | 'tipoComercio' | 'notas' | 'foto' | 'usuario' | 'codigoArea'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: string;
@@ -36,6 +38,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public tipoComercio!: string;
   public notas!: string;
   public foto!: string;
+  public usuario!: string;
+  public codigoArea!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -99,6 +103,14 @@ User.init(
       allowNull: true,
     },
     foto: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    usuario: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    codigoArea: {
       type: DataTypes.STRING,
       allowNull: true,
     },

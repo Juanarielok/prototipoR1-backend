@@ -1,4 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -10,8 +11,8 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server',
+        url: '/',
+        description: 'Current server',
       },
     ],
     components: {
@@ -24,7 +25,13 @@ const options: swaggerJsdoc.Options = {
       },
     },
   },
-apis: ["src/docs/*.ts", "src/docs/*.js", "dist/docs/*.js"],
+  apis: ['src/docs/*.ts', 'src/docs/*.js', 'dist/docs/*.js'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
+
+export const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
+  swaggerOptions: {
+    persistAuthorization: true,
+  },
+};
