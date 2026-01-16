@@ -6,6 +6,8 @@ import userRoutes from './routes/user.routes';
 import { swaggerSpec, swaggerUiOptions } from './config/swagger';
 import { sequelize } from './models';
 import assignmentsRoutes from "./routes/assignments.routes";
+import jornadaRoutes from "./routes/jornada.routes";
+import remitoRoutes from "./routes/remito.routes";
 import cors from "cors";
 const app: Application = express();
 const PORT = parseInt(process.env.PORT || "3000", 10);
@@ -48,6 +50,12 @@ app.use("/users", userRoutes);
 
 // Assignments routes
 app.use("/assignments", assignmentsRoutes);
+
+// Remito routes
+app.use("/remitos", remitoRoutes);
+
+// Jornada routes
+app.use("/jornadas", jornadaRoutes);
 
 // Database connection and server start
 const startServer = async () => {
