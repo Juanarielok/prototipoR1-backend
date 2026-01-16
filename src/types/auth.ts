@@ -4,6 +4,12 @@ export enum Role {
   CLIENTE = 'cliente',
 }
 
+export enum ClientStatus {
+  DISPONIBLE = 'disponible',
+  ASIGNADO = 'asignado',
+  VISITADO = 'visitado',
+}
+
 export interface RegisterRequest {
   email: string;
   password: string;
@@ -38,6 +44,7 @@ export interface RegisterResponse {
     foto?: string;
     usuario?: string;
     codigoArea?: string;
+    status?: ClientStatus;
   };
 }
 

@@ -338,3 +338,46 @@
  *       404:
  *         description: User not found
  */
+
+/**
+ * @swagger
+ * /users/{id}/reset-status:
+ *   patch:
+ *     summary: Reset client status to "disponible" (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Client ID (UUID)
+ *         example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *     responses:
+ *       200:
+ *         description: Client status reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Cliente disponible nuevamente"
+ *                 userId:
+ *                   type: string
+ *                   example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
+ *                 status:
+ *                   type: string
+ *                   example: "disponible"
+ *       400:
+ *         description: User is not a client
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied - Admin only
+ *       404:
+ *         description: User not found
+ */

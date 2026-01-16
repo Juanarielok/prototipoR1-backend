@@ -2,7 +2,7 @@
  * @swagger
  * /assignments:
  *   post:
- *     summary: Assign one or more clientes to a chofer (Admin only)
+ *     summary: Assign one or more clients to a chofer (Admin only)
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -18,7 +18,7 @@
  *             properties:
  *               choferId:
  *                 type: string
- *                 description: Chofer user ID (UUID - Universally Unique Identifier)
+ *                 description: Chofer user ID (UUID)
  *                 example: "1b8f2d2c-5c3a-4b7f-9c4c-2f5d0f1d2a3b"
  *               clientIds:
  *                 type: array
@@ -28,51 +28,15 @@
  *                   example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
  *     responses:
  *       201:
- *         description: Clients assigned
+ *         description: Clients assigned successfully
  *       400:
  *         description: Validation error
  *       401:
- *         description: Unauthorized (missing/invalid JWT - JSON Web Token)
+ *         description: Unauthorized
  *       403:
  *         description: Access denied - Admin only
  *       404:
  *         description: Chofer not found
- */
-
-/**
- * @swagger
- * /assignments/me:
- *   get:
- *     summary: Get my assigned clientes (Chofer only)
- *     tags: [Assignments]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of assigned clientes
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 clientes:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
- *                       nombre:
- *                         type: string
- *                         example: "Cliente Ejemplo"
- *                       ubicacion:
- *                         type: string
- *                         example: "Av. Siempre Viva 742, Mar del Plata"
- *       401:
- *         description: Unauthorized (missing/invalid JWT - JSON Web Token)
- *       403:
- *         description: Access denied - Chofer only
  */
 
 /**
@@ -95,7 +59,91 @@
  *                   type: integer
  *                   example: 15
  *       401:
- *         description: Unauthorized (missing/invalid JWT)
+ *         description: Unauthorized
  *       403:
  *         description: Access denied - Chofer only
+ */
+
+/**
+ * @swagger
+ * /assignments/me:
+ *   get:
+ *     summary: Get my assigned clients (Chofer only)
+ *     tags: [Assignments]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of assigned clients
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientes:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
+ *                       nombre:
+ *                         type: string
+ *                         example: "Cliente Ejemplo"
+ *                       ubicacion:
+ *                         type: string
+ *                         example: "Av. Siempre Viva 742, Mar del Plata"
+ *                       status:
+ *                         type: string
+ *                         example: "asignado"
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied - Chofer only
+ */
+
+/**
+ * @swagger
+ * /assignments/{clienteId}/complete:
+ *   patch:
+ *     summary: Mark a client as visited/completed (Chofer only)
+ *     description: Called when chofer generates the bill. Changes client status to "visitado" and assignment status to "done".
+ *     tags: [Assignments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clienteId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Client ID (UUID)
+ *         example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
+ *     responses:
+ *       200:
+ *         description: Client marked as visited
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Cliente marcado como visitado"
+ *                 clienteId:
+ *                   type: string
+ *                   example: "6d7a9c2f-1a2b-4c3d-8e9f-0a1b2c3d4e5f"
+ *                 assignmentStatus:
+ *                   type: string
+ *                   example: "done"
+ *                 clientStatus:
+ *                   type: string
+ *                   example: "visitado"
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied - Chofer only
+ *       404:
+ *         description: Assignment not found or already completed
  */

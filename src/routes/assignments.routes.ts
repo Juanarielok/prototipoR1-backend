@@ -1,14 +1,13 @@
 import { Router, Response } from "express";
 import { Assignment, User } from "../models";
 import { authenticate, authorize, AuthRequest } from "../middleware/auth.middleware";
-import { Role } from "../types/auth";
+import { Role, ClientStatus } from "../types/auth";
 
 const router = Router();
 
 /**
  * Admin asigna clientes a un chofer
  * POST /assignments
- * body: { choferId: string, clientIds: string[] }
  */
 router.post("/", authenticate, authorize(Role.ADMIN), async (req: AuthRequest, res: Response) => {
   const { choferId, clientIds } = req.body as { choferId?: string; clientIds?: string[] };
@@ -45,6 +44,12 @@ router.post("/", authenticate, authorize(Role.ADMIN), async (req: AuthRequest, r
 
     await Assignment.bulkCreate(rows, { ignoreDuplicates: true });
 
+    // Actualizar status de los clientes a "asignado"
+    await User.update(
+      { status: ClientStatus.ASIGNADO },
+      { where: { id: clienteIdsOk } }
+    );
+
     return res.status(201).json({
       message: "Asignados",
       count: rows.length,
@@ -77,9 +82,8 @@ router.get("/me/count", authenticate, authorize(Role.CHOFER), async (req: AuthRe
 });
 
 /**
- * Chofer trae SUS clientes asignados (para la APK)
+ * Chofer trae SUS clientes asignados
  * GET /assignments/me
- * devuelve: { clientes: [{ id, nombre, ubicacion }] }
  */
 router.get("/me", authenticate, authorize(Role.CHOFER), async (req: AuthRequest, res: Response) => {
   try {
@@ -87,7 +91,7 @@ router.get("/me", authenticate, authorize(Role.CHOFER), async (req: AuthRequest,
 
     const asignaciones = await Assignment.findAll({
       where: { choferId, status: "assigned" },
-      include: [{ model: User, as: "cliente", attributes: ["id", "nombre", "ubicacion"] }],
+      include: [{ model: User, as: "cliente", attributes: ["id", "nombre", "ubicacion", "status"] }],
       order: [["createdAt", "DESC"]],
     });
 
@@ -96,6 +100,44 @@ router.get("/me", authenticate, authorize(Role.CHOFER), async (req: AuthRequest,
     return res.json({ clientes });
   } catch (error) {
     console.error("Assignments GET /me error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/**
+ * Chofer marca un cliente como visitado (al generar factura)
+ * PATCH /assignments/:clienteId/complete
+ */
+router.patch("/:clienteId/complete", authenticate, authorize(Role.CHOFER), async (req: AuthRequest, res: Response) => {
+  const { clienteId } = req.params;
+  const choferId = req.user!.id;
+
+  try {
+    const assignment = await Assignment.findOne({
+      where: { choferId, clienteId, status: "assigned" }
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ error: "Asignación no encontrada o ya completada" });
+    }
+
+    // Actualizar assignment
+    await assignment.update({ status: "done" });
+
+    // Actualizar status del cliente a "visitado"
+    await User.update(
+      { status: ClientStatus.VISITADO },
+      { where: { id: clienteId } }
+    );
+
+    return res.json({
+      message: "Cliente marcado como visitado",
+      clienteId,
+      assignmentStatus: "done",
+      clientStatus: "visitado"
+    });
+  } catch (error) {
+    console.error("Assignments PATCH /:clienteId/complete error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });

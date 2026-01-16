@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { Role } from '../types/auth';
+import { Role, ClientStatus } from '../types/auth';
 
 interface UserAttributes {
   id: string;
@@ -18,11 +18,13 @@ interface UserAttributes {
   foto?: string;
   usuario?: string;
   codigoArea?: string;
+  status?: ClientStatus;
+  deletedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'razonSocial' | 'tipoComercio' | 'notas' | 'foto' | 'usuario' | 'codigoArea'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'razonSocial' | 'tipoComercio' | 'notas' | 'foto' | 'usuario' | 'codigoArea' | 'status' | 'deletedAt'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: string;
@@ -40,6 +42,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public foto!: string;
   public usuario!: string;
   public codigoArea!: string;
+  public status!: ClientStatus;
+  public deletedAt!: Date | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -114,11 +118,22 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    status: {
+      type: DataTypes.ENUM(...Object.values(ClientStatus)),
+      allowNull: true,
+      defaultValue: ClientStatus.DISPONIBLE,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   {
     sequelize,
     tableName: 'users',
     timestamps: true,
+    paranoid: true,
   }
 );
 
