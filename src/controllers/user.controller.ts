@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
-import { Role } from '../types/auth';
+import { Role, ClientStatus } from '../types/auth';
 
 const SALT_ROUNDS = 10;
 
@@ -116,6 +116,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         foto: newUser.foto,
         usuario: newUser.usuario,
         codigoArea: newUser.codigoArea,
+        status: newUser.status,
       },
     });
   } catch (error) {
@@ -181,6 +182,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
         foto: user.foto,
         usuario: user.usuario,
         codigoArea: user.codigoArea,
+        status: user.status,
       },
     });
   } catch (error) {
@@ -283,6 +285,35 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     });
   } catch (error) {
     console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const resetClientStatus = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    if (user.role !== Role.CLIENTE) {
+      res.status(400).json({ error: 'Solo se puede resetear el status de clientes' });
+      return;
+    }
+
+    await user.update({ status: ClientStatus.DISPONIBLE });
+
+    res.status(200).json({
+      message: 'Cliente disponible nuevamente',
+      userId: user.id,
+      status: 'disponible',
+    });
+  } catch (error) {
+    console.error('Reset client status error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
