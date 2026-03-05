@@ -126,7 +126,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { 
     nombre, 
     dni, 
@@ -254,7 +254,7 @@ export const listUsersByRole = async (req: Request, res: Response): Promise<void
 };
 
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { newPassword } = req.body;
 
   if (!newPassword) {
@@ -290,7 +290,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 };
 
 export const resetClientStatus = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   try {
     const user = await User.findByPk(id);

@@ -217,7 +217,7 @@ export const getJornadasActivas = async (req: AuthRequest, res: Response): Promi
 };
 
 export const getHistorialChofer = async (req: AuthRequest, res: Response): Promise<void> => {
-  const { choferId } = req.params;
+  const choferId = req.params.choferId as string;
   const { limite = 30, fechaInicio, fechaFin } = req.query;
 
   try {

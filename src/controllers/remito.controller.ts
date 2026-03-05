@@ -93,7 +93,7 @@ export const createRemito = async (req: AuthRequest, res: Response): Promise<voi
 };
 
 export const getRemito = async (req: AuthRequest, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   try {
     const remito = await Remito.findByPk(id, {
@@ -160,7 +160,7 @@ export const getMyRemitos = async (req: AuthRequest, res: Response): Promise<voi
 };
 
 export const generatePDF = async (req: AuthRequest, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   try {
     const remito = await Remito.findByPk(id, {
