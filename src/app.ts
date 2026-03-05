@@ -7,6 +7,7 @@ import { swaggerSpec, swaggerUiOptions } from './config/swagger';
 import assignmentsRoutes from "./routes/assignments.routes";
 import jornadaRoutes from "./routes/jornada.routes";
 import remitoRoutes from "./routes/remito.routes";
+import locationRoutes from "./routes/location.routes";
 import cors from "cors";
 
 const app: Application = express();
@@ -54,5 +55,8 @@ app.use("/remitos", remitoRoutes);
 
 // Jornada routes
 app.use("/jornadas", jornadaRoutes);
+
+// Location routes
+app.use("/locations", locationRoutes);
 
 export default app;
