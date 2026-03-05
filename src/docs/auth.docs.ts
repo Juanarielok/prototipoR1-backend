@@ -22,11 +22,11 @@
  *               email:
  *                 type: string
  *                 format: email
- *                 example: admin@example.com
+ *                 example: admin@test.com
  *               password:
  *                 type: string
  *                 minLength: 6
- *                 example: mypassword123
+ *                 example: admin123
  *               nombre:
  *                 type: string
  *                 example: Admin Principal
@@ -84,10 +84,31 @@
  *               email:
  *                 type: string
  *                 format: email
- *                 example: admin@example.com
+ *                 example: admin@test.com
  *               password:
  *                 type: string
- *                 example: mypassword123
+ *                 example: admin123
+ *           examples:
+ *             Admin:
+ *               summary: Login como Admin
+ *               value:
+ *                 email: admin@test.com
+ *                 password: admin123
+ *             Chofer 1:
+ *               summary: Login como Chofer 1
+ *               value:
+ *                 email: chofer1@test.com
+ *                 password: admin123
+ *             Chofer 2:
+ *               summary: Login como Chofer 2
+ *               value:
+ *                 email: chofer2@test.com
+ *                 password: admin123
+ *             Cliente 1:
+ *               summary: Login como Cliente 1
+ *               value:
+ *                 email: cliente1@test.com
+ *                 password: admin123
  *     responses:
  *       200:
  *         description: Login successful

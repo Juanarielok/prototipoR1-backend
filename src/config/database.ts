@@ -9,12 +9,14 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASS, // <-- ESTA ES LA CLAVE
   database: process.env.DB_NAME,
   logging: false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
+  dialectOptions: process.env.DB_SSL === "false"
+    ? {}
+    : {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      },
 });
 
 export default sequelize;

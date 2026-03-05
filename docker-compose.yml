@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: protor1
+      POSTGRES_PASSWORD: protor1
+      POSTGRES_DB: protor1
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U protor1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  seed:
+    build: .
+    command: npm run seed
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: protor1
+      DB_PASS: protor1
+      DB_NAME: protor1
+      DB_SSL: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: protor1
+      DB_PASS: protor1
+      DB_NAME: protor1
+      DB_SSL: "false"
+      JWT_SECRET: mi-clave-secreta-local
+    depends_on:
+      db:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
